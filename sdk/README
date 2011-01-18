@@ -1,0 +1,12 @@
+This is the Software Development Kit for the Mobile Platform.
+
+Centos
+======
+QPid 0.5 must be installed before attempting to run TheCore
+This can be downloaded from http://www.apache.org/dist/qpid/0.5/qpid-cpp-0.5.tar.gz
+
+cmake is requided to build the files under Centos
+
+Windows
+=======
+Run the installation file under the Windows directory

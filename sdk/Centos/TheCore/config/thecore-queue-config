@@ -1,0 +1,14 @@
+#!/bin/sh
+
+export PYTHONPATH=<QPID_CLIENT_PATH>/python:$PYTHONPATH
+
+HOST=$1
+
+python qpid-config -a $HOST add exchange direct core.direct --durable
+python qpid-config -a $HOST add exchange topic core.topic --durable
+python qpid-config -a $HOST add queue core.client-core --durable
+python qpid-config -a $HOST add queue core.service-core --durable
+python qpid-config -a $HOST add queue core.trace --durable
+python qpid-config -a $HOST bind core.direct core.client-core core.client-core
+python qpid-config -a $HOST bind core.direct core.service-core core.service-core
+python qpid-config -a $HOST bind core.direct core.trace core.trace
