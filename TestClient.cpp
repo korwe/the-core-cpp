@@ -61,7 +61,7 @@ int main (int argc, char const *argv[])
     
     std::cout << std::endl << "Test case: Initiate session request" << std::endl;
     sender.sendCoreMessage(InitiateSessionRequest(SESSION_ID), SESSION_ID);
-    boost::shared_ptr<InitiateSessionResponse> response = boost::dynamic_pointer_cast<InitiateSessionResponse>(receiver.getNextCoreMessage(500));
+    boost::shared_ptr<InitiateSessionResponse> response = boost::dynamic_pointer_cast<InitiateSessionResponse>(receiver.getNextCoreMessage(5000));
     if (response == 0) {
         std::cout << "No response to initiate session" << std::endl;
         return 1;
