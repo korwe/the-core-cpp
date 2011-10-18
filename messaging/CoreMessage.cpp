@@ -28,7 +28,10 @@
 #include <algorithm>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/uuid/uuid.hpp>
+//#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 #include "CoreMessage.h"
 
 const std::string CoreMessage::lookupTypeName(CoreMessage::MessageType messageType) {
@@ -125,9 +128,11 @@ CoreRequest::~CoreRequest() {
 
 void CoreRequest::createGuid() {
     using namespace boost::uuids;
-    uuid_generator gen;
+//    uuid_generator gen;
+    random_generator gen;
     uuid basicUuid = gen();
-    setGuid(basicUuid.to_string());
+//    setGuid(basicUuid.to_string());
+    setGuid(to_string(basicUuid));
 }
 
 CoreResponse::CoreResponse(const std::string& sessionId, const std::string& guid,
