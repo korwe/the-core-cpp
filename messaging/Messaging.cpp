@@ -48,12 +48,13 @@ const bool Queues::isDirect(Queues::Queue queue) {
     }
 }
 
-MessageSender::MessageSender(std::string queue_server, Queues::Queue destination) {
+MessageSender::MessageSender(std::string queue_server, Queues::Queue destination, int server_port) {
     _server = queue_server;
+    _port = server_port;
     _queue = destination;
     _connection = new qpid::client::Connection();
-    syslog(LOG_DEBUG, "Connecting to %s", _server.c_str());
-    _connection->open(_server);
+    syslog(LOG_DEBUG, "Connecting to %s:%d", _server.c_str(), _port);
+    _connection->open(_server, _port);
     syslog(LOG_DEBUG, "Connected");
 }
 
@@ -90,13 +91,14 @@ void MessageSender::sendCoreMessage(const CoreMessage& content, std::string sess
     sendMessage(_serializer.serialize(content), sessionId);
 }
 
-MessageReceiver::MessageReceiver(std::string queue_server, Queues::Queue source) {
+MessageReceiver::MessageReceiver(std::string queue_server, Queues::Queue source, int server_port) {
     _server = queue_server;
+    _port = server_port;
     _queue = source;
     _queueName = Queues::queueName(_queue);
-    syslog(LOG_DEBUG, "Connecting to %s", _server.c_str());
+    syslog(LOG_DEBUG, "Connecting to %s:%d", _server.c_str(), _port);
     _connection = new qpid::client::Connection();
-    _connection->open(_server);
+    _connection->open(_server, _port);
     syslog(LOG_DEBUG, "Creating session");
     _session = new qpid::client::Session(_connection->newSession());
     syslog(LOG_DEBUG, "Creating subs manager");
@@ -108,12 +110,13 @@ MessageReceiver::MessageReceiver(std::string queue_server, Queues::Queue source)
     syslog(LOG_DEBUG, "Done creating receiver");
 }
 
-MessageReceiver::MessageReceiver(std::string queue_server, Queues::Queue source, std::string sessionId) {
+MessageReceiver::MessageReceiver(std::string queue_server, Queues::Queue source, std::string sessionId, int server_port) {
     _server = queue_server;
+    _port = server_port;
     _queue = source;
-    syslog(LOG_DEBUG, "Connecting to %s", _server.c_str());
+    syslog(LOG_DEBUG, "Connecting to %s:%d", _server.c_str(), _port);
     _connection = new qpid::client::Connection();
-    _connection->open(_server);
+    _connection->open(_server, _port);
     _queueName = Queues::queueName(_queue) + "." + sessionId;
     using namespace qpid::client;
     _session = new qpid::client::Session(_connection->newSession());

@@ -37,6 +37,7 @@
 #include <string.h>
 #include <syslog.h>
 #include <queue>
+#include <boost/lexical_cast.hpp>
 
 #include <CoreMessage.h>
 #include <CoreMessageSerializer.h>
@@ -63,14 +64,19 @@ int main(int argc, char* argv[]) {
     signal(SIGHUP, signal_handler); /* catch hangup signal */
     signal(SIGTERM,signal_handler); /* catch kill signal */
     std::string queue_server(argv[1]);
+    int port = 5672;
+    if (argc > 2) {
+        std::string port_str(argv[2]);
+        port = boost::lexical_cast<int>(port_str);
+    }
 
-    MessageReceiver receiver(queue_server, Queues::CLIENT_CORE);        
+    MessageReceiver receiver(queue_server, Queues::CLIENT_CORE, port);        
     syslog(LOG_INFO,"Created receiver");
 
-    MessageSender traceSender(queue_server, Queues::CORE_TRACE);
+    MessageSender traceSender(queue_server, Queues::CORE_TRACE, port);
     syslog(LOG_INFO,"Created trace sender");
-    MessageSender sessionSender(queue_server, Queues::CORE_SESSION);
-    MessageSender clientSender(queue_server, Queues::CORE_CLIENT);
+    MessageSender sessionSender(queue_server, Queues::CORE_SESSION, port);
+    MessageSender clientSender(queue_server, Queues::CORE_CLIENT, port);
     syslog(LOG_INFO,"Checking for messages");
     CoreMessageXmlSerializer serializer;
 

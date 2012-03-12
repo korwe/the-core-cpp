@@ -129,6 +129,7 @@ void daemonize() {
 int main(int argc, char* argv[])
 {
     std::string queue_server;
+    std::string queue_port;
     po::options_description generic("Generic options");
     generic.add_options()
         ("version,v", "Print version string")
@@ -137,6 +138,7 @@ int main(int argc, char* argv[])
     po::options_description config("Configuration");
     config.add_options()
         ("queue-server,q", po::value(&queue_server), "Queue server hostname/IP")
+        ("queue-port,p", po::value(&queue_port), "Queue server port")
         ;
     po::options_description cmdline_options;
     cmdline_options.add(generic).add(config);
@@ -177,12 +179,20 @@ int main(int argc, char* argv[])
         exit(1);
     case 0: /* (third) child process */
         strcat(path, "/CoreServiceMonitor");
-        status = execlp(path, path, queue_server.c_str(), 0);
+        if (!queue_port.empty()) {
+            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), 0);
+        } else {
+            status = execlp(path, path, queue_server.c_str(), 0);
+        }
         wait(&status);
         break;
     default: /* parent process */
         strcat(path, "/CoreClientMonitor");
-        status = execlp(path, path, queue_server.c_str(), 0);
+         if (!queue_port.empty()) {
+            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), 0);
+        } else {
+            status = execlp(path, path, queue_server.c_str(), 0);
+        }
         wait(&status);
         break;
     }

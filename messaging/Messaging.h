@@ -58,13 +58,14 @@ class Queues {
 
 class MessageSender {
     public:
-        MessageSender(std::string queue_server, Queues::Queue destination);
+        MessageSender(std::string queue_server, Queues::Queue destination, int server_port = 5672);
         ~MessageSender();
         void sendMessage(std::string content, std::string sessionId);
         void sendXmlMessage(pugi::xml_document& content, std::string sessionId);
         void sendCoreMessage(const CoreMessage& content, std::string sessionId);
     private:
         std::string _server;
+        int _port;
         Queues::Queue _queue;
         qpid::client::Connection* _connection;
         CoreMessageXmlSerializer _serializer;
@@ -72,14 +73,15 @@ class MessageSender {
 
 class MessageReceiver {
     public:
-        MessageReceiver(std::string queue_server, Queues::Queue source);
-        MessageReceiver(std::string queue_server, Queues::Queue source, std::string sessionId);
+        MessageReceiver(std::string queue_server, Queues::Queue source, int server_port = 5672);
+        MessageReceiver(std::string queue_server, Queues::Queue source, std::string sessionId, int server_port = 5672);
         ~MessageReceiver();
         std::string getNextMessage(int timeoutMillis);
         pugi::xml_document getNextXmlMessage(int timeoutMillis);
         boost::shared_ptr<CoreMessage> getNextCoreMessage(int timeoutMillis);
     private:
         std::string _server;
+        int _port;
         std::string _queueName;
         Queues::Queue _queue;
         qpid::client::Connection* _connection;
