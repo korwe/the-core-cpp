@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
     po::options_description config("Configuration");
     config.add_options()
         ("queue-server,q", po::value(&queue_server), "Queue server hostname/IP")
-        ("queue-port,p", po::value(&queue_port), "Queue server port")
+        ("queue-port,p", po::value(&queue_port), "Queue server port (default: 5672)")
         ;
     po::options_description cmdline_options;
     cmdline_options.add(generic).add(config);
