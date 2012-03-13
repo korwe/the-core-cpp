@@ -17,4 +17,4 @@
  * along with TheCore.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define THE_CORE_VERSION "1.0.1"
+#define THE_CORE_VERSION "1.0.2"
