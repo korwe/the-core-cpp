@@ -146,13 +146,13 @@ std::string MessageReceiver::getNextMessage(int timeoutMillis) {
     
 }
 
-pugi::xml_document MessageReceiver::getNextXmlMessage(int timeoutMillis) {
-    pugi::xml_document doc;
+boost::shared_ptr<pugi::xml_document> MessageReceiver::getNextXmlMessage(int timeoutMillis) {
+    pugi::xml_document* doc = new pugi::xml_document();
     std::string messageData = getNextMessage(timeoutMillis);
     if (!messageData.empty()) {
-        doc.load(messageData.c_str());
+        doc->load(messageData.c_str());
     }
-    return doc;
+    return boost::shared_ptr<pugi::xml_document>(doc);
 }
 
 boost::shared_ptr<CoreMessage> MessageReceiver::getNextCoreMessage(int timeoutMillis) {

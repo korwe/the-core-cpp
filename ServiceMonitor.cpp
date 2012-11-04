@@ -81,29 +81,39 @@ int main(int argc, char* argv[]) {
         std::string rawMessage = receiver.getNextMessage(10000);
         syslog(LOG_DEBUG, "%s", rawMessage.c_str());
         if (!rawMessage.empty()) {
-            traceSender.sendMessage(rawMessage, "");
-            CoreMessage* message = serializer.deserialize(rawMessage);
-            std::string sessionId = message->sessionId();
+            try {
+                //traceSender.sendMessage(rawMessage, "");
+                CoreMessage* message = serializer.deserialize(rawMessage);
+                if (message) {
+                    std::string sessionId = message->sessionId();
 
-            syslog(LOG_DEBUG, "%s", sessionId.c_str());
-            syslog(LOG_DEBUG, "%s", CoreMessage::lookupTypeName(message->messageType()).c_str());
-            switch (message->messageType()) {
+                    syslog(LOG_DEBUG, "%s", sessionId.c_str());
+                    syslog(LOG_DEBUG, "%s", CoreMessage::lookupTypeName(message->messageType()).c_str());
+                    switch (message->messageType()) {
 
-                case CoreMessage::DATA_RESPONSE:
-                case CoreMessage::SERVICE_RESPONSE: {
-                    syslog(LOG_DEBUG, "Forwarding to session");
-                    sessionSender.sendMessage(serializer.serialize(*message), sessionId);
-                    break;
+                        case CoreMessage::DATA_RESPONSE:
+                        case CoreMessage::SERVICE_RESPONSE: {
+                            syslog(LOG_DEBUG, "Forwarding to session");
+                            sessionSender.sendMessage(serializer.serialize(*message), sessionId);
+                            break;
+                        }
+                        default: {
+                            syslog(LOG_WARNING, "Invalid message");
+                            break;
+                        }
+                    }
+                    delete message;
                 }
-                default: {
-                    syslog(LOG_WARNING, "Invalid message");
-                    break;
+                else {
+                    syslog(LOG_ERR, "Message could not be deserialized");
                 }
             }
-            delete message;
+            catch (std::exception& e) {
+                syslog(LOG_ERR, "Exception caught: %s", e.what());
+            }
         }
         else {
-            syslog(LOG_DEBUG, "No messages for 10 sec. Nobody loves me anymore");
+            syslog(LOG_DEBUG, "No service messages for 10 sec.");
         }
     }
     

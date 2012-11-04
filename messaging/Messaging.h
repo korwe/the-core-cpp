@@ -77,7 +77,7 @@ class MessageReceiver {
         MessageReceiver(std::string queue_server, Queues::Queue source, std::string sessionId, int server_port = 5672);
         ~MessageReceiver();
         std::string getNextMessage(int timeoutMillis);
-        pugi::xml_document getNextXmlMessage(int timeoutMillis);
+        boost::shared_ptr<pugi::xml_document> getNextXmlMessage(int timeoutMillis);
         boost::shared_ptr<CoreMessage> getNextCoreMessage(int timeoutMillis);
     private:
         std::string _server;

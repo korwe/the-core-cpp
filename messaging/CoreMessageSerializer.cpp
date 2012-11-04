@@ -18,6 +18,8 @@
  */
 
 #include <syslog.h>
+#include <iostream>
+#include <sstream>
 
 #include "pugixml.hpp"
 #include "CoreMessageSerializer.h"
@@ -49,8 +51,10 @@ CoreMessageXmlSerializer::~CoreMessageXmlSerializer() {
 
  CoreMessage* CoreMessageXmlSerializer::deserialize(const std::string& message) const {
     pugi::xml_document doc;
-    pugi::xml_parse_result result = doc.load(message.c_str());
-    if (!bool(result)) {
+    std::istringstream mstream;
+    mstream.str(message);
+    pugi::xml_parse_result result = doc.load(mstream);
+    if (!result) {
         syslog(LOG_ERR, "Message is not well-formed XML");
         return (CoreMessage*) 0;
     }

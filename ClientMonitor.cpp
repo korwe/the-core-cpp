@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
         syslog(LOG_DEBUG, "%s", rawMessage.c_str());
         if (!rawMessage.empty()) {
             try {
-                traceSender.sendMessage(rawMessage, "");
+                //traceSender.sendMessage(rawMessage, "");
                 CoreMessage* message = serializer.deserialize(rawMessage);
                 if (message) {
                     std::string sessionId = message->sessionId();
@@ -111,13 +111,16 @@ int main(int argc, char* argv[]) {
                     }
                     delete message;
                 }
+                else {
+                    syslog(LOG_ERR, "Message could not be deserialized");
+                }
             }
             catch (std::exception& e) {
                 syslog(LOG_ERR, "Exception caught: %s", e.what());
             }
         }
         else {
-            syslog(LOG_DEBUG, "No messages for 10 sec. Clients love me not");
+            syslog(LOG_DEBUG, "No client messages for 10 sec.");
         }
     }
     
