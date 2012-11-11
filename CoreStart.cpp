@@ -180,18 +180,18 @@ int main(int argc, char* argv[])
     case 0: /* (third) child process */
         strcat(path, "/CoreServiceMonitor");
         if (!queue_port.empty()) {
-            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), 0);
+            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), (char *) 0);
         } else {
-            status = execlp(path, path, queue_server.c_str(), 0);
+            status = execlp(path, path, queue_server.c_str(), (char *) 0);
         }
         wait(&status);
         break;
     default: /* parent process */
         strcat(path, "/CoreClientMonitor");
          if (!queue_port.empty()) {
-            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), 0);
+            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), (char *) 0);
         } else {
-            status = execlp(path, path, queue_server.c_str(), 0);
+            status = execlp(path, path, queue_server.c_str(), (char *) 0);
         }
         wait(&status);
         break;

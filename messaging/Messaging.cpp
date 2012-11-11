@@ -102,7 +102,7 @@ MessageReceiver::MessageReceiver(std::string queue_server, Queues::Queue source,
     syslog(LOG_DEBUG, "Creating session");
     _session = new qpid::client::Session(_connection->newSession());
     syslog(LOG_DEBUG, "Creating subs manager");
-    _subscriptions = new qpid::client::SubscriptionManager::SubscriptionManager(*_session);
+    _subscriptions = new qpid::client::SubscriptionManager(*_session);
     syslog(LOG_DEBUG, "Creating local queue");
     _localQueue = new qpid::client::LocalQueue();
     syslog(LOG_DEBUG, "Creating subscription");
@@ -118,11 +118,10 @@ MessageReceiver::MessageReceiver(std::string queue_server, Queues::Queue source,
     _connection = new qpid::client::Connection();
     _connection->open(_server, _port);
     _queueName = Queues::queueName(_queue) + "." + sessionId;
-    using namespace qpid::client;
     _session = new qpid::client::Session(_connection->newSession());
-    _session->queueDeclare(arg::queue=_queueName, arg::exclusive=false, arg::autoDelete=true);
-    _session->exchangeBind(arg::exchange=Q_TOPIC, arg::queue=_queueName, arg::bindingKey=_queueName);
-    _subscriptions = new SubscriptionManager::SubscriptionManager(*_session);
+    _session->queueDeclare(qpid::client::arg::queue=_queueName, qpid::client::arg::exclusive=false, qpid::client::arg::autoDelete=true);
+    _session->exchangeBind(qpid::client::arg::exchange=Q_TOPIC, qpid::client::arg::queue=_queueName, qpid::client::arg::bindingKey=_queueName);
+    _subscriptions = new qpid::client::SubscriptionManager(*_session);
     _localQueue = new qpid::client::LocalQueue();
     _subscriptions->subscribe(*_localQueue, _queueName);
 }
