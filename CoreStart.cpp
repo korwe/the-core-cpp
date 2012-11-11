@@ -52,7 +52,7 @@ namespace po = boost::program_options;
 #define RUN_DIR "/var/run"
 #define LOCK_FILE   "CoreClientMonitor.pid"
 
-void daemonize() {
+void daemonize(char* lockFileName) {
      struct rlimit resourceLimit = { 0 };
      int status = -1;
      int fileDesc = -1;
@@ -112,7 +112,7 @@ void daemonize() {
       * terminal */
      chdir(RUN_DIR);
      umask(0);
-     lockFileDesc = open(LOCK_FILE, O_RDWR|O_CREAT, 0640);
+     lockFileDesc = open(lockFileName, O_RDWR|O_CREAT, 0640);
 
      if (lockFileDesc < 0) exit(1); /* cannot open */
 
@@ -169,7 +169,12 @@ int main(int argc, char* argv[])
     
     char path[200];
     getcwd(path, 199);
-    daemonize();
+
+    char lockFile[50] = "";
+    strncat(lockFile, queue_port.c_str(), 8);
+    strncat(lockFile, "_", 1);
+    strncat(lockFile, LOCK_FILE, 40);
+    daemonize(lockFile);
     int status;
     status = fork();
     switch (status)
