@@ -56,9 +56,11 @@ MessageSender::MessageSender(std::string queue_server, Queues::Queue destination
     syslog(LOG_DEBUG, "Connecting to %s:%d", _server.c_str(), _port);
     _connection->open(_server, _port);
     syslog(LOG_DEBUG, "Connected");
+    _session = new qpid::client::Session(_connection->newSession());
 }
 
 MessageSender::~MessageSender() {
+    _session->close();
     _connection->close();
     delete _connection;
 }
@@ -75,9 +77,9 @@ void MessageSender::sendMessage(std::string content, std::string sessionId) {
     Message amqMessage;
     amqMessage.setData(content);
     amqMessage.getDeliveryProperties().setRoutingKey(amqRouting);
-    Session session = _connection->newSession();
-    session.messageTransfer(arg::content=amqMessage, arg::destination=amqDestination);
-    session.close();
+//    Session session = _connection->newSession();
+    _session->messageTransfer(arg::content=amqMessage, arg::destination=amqDestination);
+//    session.close();
 }
 
 void MessageSender::sendXmlMessage(pugi::xml_document& content, std::string sessionId) {

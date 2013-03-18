@@ -68,6 +68,7 @@ class MessageSender {
         int _port;
         Queues::Queue _queue;
         qpid::client::Connection* _connection;
+        qpid::client::Session* _session;
         CoreMessageXmlSerializer _serializer;
 };
 
