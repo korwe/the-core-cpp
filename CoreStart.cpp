@@ -130,6 +130,7 @@ int main(int argc, char* argv[])
 {
     std::string queue_server;
     std::string queue_port;
+    std::string trace;
     po::options_description generic("Generic options");
     generic.add_options()
         ("version,v", "Print version string")
@@ -139,6 +140,7 @@ int main(int argc, char* argv[])
     config.add_options()
         ("queue-server,q", po::value(&queue_server), "Queue server hostname/IP")
         ("queue-port,p", po::value(&queue_port), "Queue server port (default: 5672)")
+        ("trace,t", "Send messages to trace queue")
         ;
     po::options_description cmdline_options;
     cmdline_options.add(generic).add(config);
@@ -167,10 +169,23 @@ int main(int argc, char* argv[])
         return 1;
     }
     
+    if (!vm.count("queue-port")) {
+        queue_port = "5672";
+    }
+    
+    if (vm.count("trace")) {
+        trace = "trace";
+    }
+    else {
+        trace = "";
+    }
+
     char path[200];
     getcwd(path, 199);
 
-    char lockFile[50] = "";
+    char lockFile[80] = "";
+    strncat(lockFile, queue_server.c_str(), 20);
+    strncat(lockFile, "_", 1);
     strncat(lockFile, queue_port.c_str(), 8);
     strncat(lockFile, "_", 1);
     strncat(lockFile, LOCK_FILE, 40);
@@ -185,18 +200,18 @@ int main(int argc, char* argv[])
     case 0: /* (third) child process */
         strcat(path, "/CoreServiceMonitor");
         if (!queue_port.empty()) {
-            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), (char *) 0);
+            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), trace.c_str(), (char *) 0);
         } else {
-            status = execlp(path, path, queue_server.c_str(), (char *) 0);
+            status = execlp(path, path, queue_server.c_str(), trace.c_str(), (char *) 0);
         }
         wait(&status);
         break;
     default: /* parent process */
         strcat(path, "/CoreClientMonitor");
          if (!queue_port.empty()) {
-            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), (char *) 0);
+            status = execlp(path, path, queue_server.c_str(), queue_port.c_str(), trace.c_str(), (char *) 0);
         } else {
-            status = execlp(path, path, queue_server.c_str(), (char *) 0);
+            status = execlp(path, path, queue_server.c_str(), trace.c_str(), (char *) 0);
         }
         wait(&status);
         break;

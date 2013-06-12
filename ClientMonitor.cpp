@@ -65,9 +65,15 @@ int main(int argc, char* argv[]) {
     signal(SIGTERM,signal_handler); /* catch kill signal */
     std::string queue_server(argv[1]);
     int port = 5672;
+    bool trace = false;
     if (argc > 2) {
         std::string port_str(argv[2]);
         port = boost::lexical_cast<int>(port_str);
+    }
+    if (argc > 3) {
+        if (strcmp(argv[3], "trace") == 0) {
+            trace = true;
+        }
     }
 
     MessageReceiver receiver(queue_server, Queues::CLIENT_CORE, port);        
@@ -86,7 +92,9 @@ int main(int argc, char* argv[]) {
         syslog(LOG_DEBUG, "%s", rawMessage.c_str());
         if (!rawMessage.empty()) {
             try {
-                //traceSender.sendMessage(rawMessage, "");
+                if (trace) {
+                    traceSender.sendMessage(rawMessage, "");
+                }
                 CoreMessage* message = serializer.deserialize(rawMessage);
                 if (message) {
                     std::string sessionId = message->sessionId();

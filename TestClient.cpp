@@ -22,8 +22,7 @@
 #include <CoreMessage.h>
 #include <Messaging.h>
 
-#define Q_SERVER "172.16.68.142"
-//#define Q_SERVER "korwe.dnsalias.com"
+#define Q_SERVER "127.0.0.1"
 #define SESSION_ID "12345678"
 
 int handleService(ServiceRequest& req, MessageSender& sender, MessageReceiver& receiver, MessageReceiver& dataReceiver) {

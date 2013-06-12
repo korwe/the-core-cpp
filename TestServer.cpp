@@ -23,8 +23,7 @@
 
 
 #define SERVICE_ID "TestService"
-#define Q_SERVER "172.16.68.142"
-//#define Q_SERVER "korwe.dnsalias.com"
+#define Q_SERVER "127.0.0.1"
 
 int main (int argc, char const *argv[])
 {
