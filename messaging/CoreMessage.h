@@ -127,7 +127,10 @@ class ServiceRequest : public CoreRequest {
         const std::vector<std::string>& parameterNames() const;
         const std::string parameterValue(const std::string& name) const;
         void setParameter(const std::string& name, const std::string& value);
+        const std::string location() const;
+        void setLocation(const std::string& location);
     private:
+        std::string _location;
         std::string _functionName;
         std::vector<std::string> _paramNames;
         std::map<std::string, std::string> _params; 

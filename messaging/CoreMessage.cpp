@@ -251,6 +251,10 @@ const std::vector<std::string>& ServiceRequest::parameterNames() const {
     return _paramNames;
 }
 
+const std::string ServiceRequest::location() const {
+    return _location;
+}
+
 /** @brief parameterValue
   *
   * @todo: document this function
@@ -275,6 +279,10 @@ void ServiceRequest::setParameter(const std::string& name, const std::string& va
         _paramNames.push_back(name);
     }
     _params[name] = value;
+}
+
+void ServiceRequest::setLocation(const std::string& location) {
+    _location = location;
 }
 
 /** @brief ServiceResponse

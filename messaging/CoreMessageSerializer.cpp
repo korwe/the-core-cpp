@@ -110,6 +110,10 @@ CoreMessageXmlSerializer::~CoreMessageXmlSerializer() {
             for (pugi::xml_node::iterator it = params.begin(); it != params.end(); ++it) {
                 serviceReq->setParameter(it->child_value("name"), it->child_value("value"));
             }
+            std::string loc = msg.child_value("location");
+            if (!loc.empty()) {
+                serviceReq->setLocation(loc);
+            }
             newMessage = serviceReq;
             break;
         }
@@ -162,6 +166,10 @@ const std::string CoreMessageXmlSerializer::serialize(const CoreMessage& message
         }
         case CoreMessage::SERVICE_REQUEST: {
             const ServiceRequest req = dynamic_cast<const ServiceRequest&>(message);
+            if (!req.location().empty()) {
+                msgNode.append_child().set_name("location");
+                msgNode.child("location").append_child(pugi::node_pcdata).set_value(req.location().c_str());
+            }
             msgNode.append_child().set_name("function");
             msgNode.child("function").append_child(pugi::node_pcdata).set_value(req.functionName().c_str());
             pugi::xml_node params = msgNode.append_child();
